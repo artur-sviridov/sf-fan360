@@ -1,0 +1,77 @@
+openapi: 3.0.3
+info:
+  title: Fan 360 Labs Semantic Search
+  description: |
+    Vector-similarity search over Wikipedia narrative chunks. Backed by
+    either the Data Cloud Vector DB (primary path) or a pgvector store
+    fronted by the Cloud Run llm-shim (fallback path).
+  version: 0.1.0
+servers:
+  - url: https://CLOUD_RUN_SHIM_URL_PLACEHOLDER
+paths:
+  /rag/search:
+    post:
+      operationId: searchKnowledge
+      summary: Semantic search for narrative chunks.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Top-k chunks with citations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+components:
+  schemas:
+    SearchRequest:
+      type: object
+      required: [query]
+      properties:
+        query:
+          type: string
+          description: Natural-language query.
+        k:
+          type: integer
+          default: 5
+          minimum: 1
+          maximum: 20
+        entityType:
+          type: string
+          enum: [player, club, manager]
+          description: Optional filter to scope results.
+        entitySlug:
+          type: string
+          description: Optional filter to scope results to one entity.
+    SearchResponse:
+      type: object
+      required: [results]
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchHit'
+    SearchHit:
+      type: object
+      required: [chunk_id, text, source_url, score]
+      properties:
+        chunk_id:
+          type: string
+        text:
+          type: string
+        title:
+          type: string
+        source_url:
+          type: string
+          format: uri
+        entity_type:
+          type: string
+        entity_slug:
+          type: string
+        score:
+          type: number
+          format: float

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExternalServiceRegistration xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Vector-similarity search over Wikipedia narrative chunks. Backed by the Cloud Run llm-shim service.</description>
+    <label>Semantic Search Knowledge</label>
+    <namedCredentialReference>Cloud_Run_Shim</namedCredentialReference>
+    <namedCredential>Cloud_Run_Shim</namedCredential>
+    <operations>
+        <active>true</active>
+        <name>searchKnowledge</name>
+    </operations>
+    <registrationProviderType>Custom</registrationProviderType>
+    <schemaType>OpenApi3</schemaType>
+    <schemaUploadFileExtension>yaml</schemaUploadFileExtension>
+    <schemaUploadFileName>semantic-search</schemaUploadFileName>
+    <serviceBinding>{"host":"placeholder","basePath":"/"}</serviceBinding>
+    <status>Complete</status>
+    <systemVersion>3</systemVersion>
+</ExternalServiceRegistration>

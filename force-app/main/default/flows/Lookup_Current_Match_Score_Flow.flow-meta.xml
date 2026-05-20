@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <description>Optional flow wrapper around LookupCurrentMatchScore. Allows admins to swap the Apex implementation for a no-code Flow without redeploying agent metadata.</description>
+    <interviewLabel>Lookup Current Match Score Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Lookup Current Match Score Flow</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value><stringValue>LightningFlowBuilder</stringValue></value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value><stringValue>AUTO_LAYOUT_CANVAS</stringValue></value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value><stringValue>LightningFlowBuilder</stringValue></value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <runInMode>SystemModeWithSharing</runInMode>
+    <start>
+        <locationX>176</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Call_Apex</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <actionCalls>
+        <name>Call_Apex</name>
+        <label>Call Apex Action</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <actionName>LookupCurrentMatchScore</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>LookupCurrentMatchScore</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+</Flow>

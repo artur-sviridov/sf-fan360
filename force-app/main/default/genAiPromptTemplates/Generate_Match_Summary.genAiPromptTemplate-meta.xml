@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>1</activeVersionIdentifier>
+    <description>Generate a three-sentence summary of an EPL match using Data Cloud match record + recent events + top tactical-context vector hits.</description>
+    <developerName>Generate_Match_Summary</developerName>
+    <masterLabel>Generate Match Summary</masterLabel>
+    <relatedEntity>Match__dlm</relatedEntity>
+    <type>flex</type>
+    <visibility>Global</visibility>
+    <templateVersions>
+        <content>You are an EPL match analyst writing for a fan watching on a second-screen app.
+
+Inputs you have:
+- Match facts (from Data Cloud Match__dlm record): {!$Input:Match.home_team__c} vs {!$Input:Match.away_team__c}, season {!$Input:Match.season__c}, final score {!$Input:Match.home_score__c}-{!$Input:Match.away_score__c}, date {!$Input:Match.match_date__c}.
+- Top recent events (Data Cloud MatchEvent__dlm): {!$Input:Events}
+- Tactical context (top-3 vector chunks from Knowledge): {!$Input:Context}
+
+Rules:
+- Output exactly three sentences.
+- Cite at least one source by entity_slug or url in parentheses.
+- If a fact is not in the inputs, do not state it. Default to "no data available".
+- No betting odds. No speculation about future fixtures.
+- Tone: knowledgeable, concise, neutral.
+
+Begin:</content>
+        <inputs>
+            <apiName>Match</apiName>
+            <definition>SObject://Match__dlm</definition>
+            <referenceName>Match</referenceName>
+            <required>true</required>
+        </inputs>
+        <inputs>
+            <apiName>Events</apiName>
+            <definition>primitive://String</definition>
+            <referenceName>Events</referenceName>
+            <required>false</required>
+        </inputs>
+        <inputs>
+            <apiName>Context</apiName>
+            <definition>primitive://String</definition>
+            <referenceName>Context</referenceName>
+            <required>false</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT4Omni</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>1</versionIdentifier>
+    </templateVersions>
+</GenAiPromptTemplate>

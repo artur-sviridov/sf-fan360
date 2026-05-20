@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EntityType__c</fullName>
+    <description>player | club | manager. Lets the agent scope semantic search.</description>
+    <externalId>false</externalId>
+    <label>Entity Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>player</fullName><default>false</default></value>
+            <value><fullName>club</fullName><default>false</default></value>
+            <value><fullName>manager</fullName><default>false</default></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CalculatedInsight xmlns="http://soap.sforce.com/2006/04/metadata">
+    <calculationFrequency>Daily</calculationFrequency>
+    <dataSpace>default</dataSpace>
+    <description>Per-player per-opponent aggregates. Powers the reference query "Has anyone scored more goals against Chelsea than Salah?"</description>
+    <label>Player vs Opponent</label>
+    <masterLabel>Player vs Opponent</masterLabel>
+    <sqlExpression>SELECT
+    UnifiedPlayer__dlm.unified_player_id__c AS unified_player_id__c,
+    UnifiedPlayer__dlm.player_name__c AS player_name__c,
+    UnifiedTeam__dlm.canonical_team_id__c AS opponent_id__c,
+    UnifiedTeam__dlm.team_name__c AS opponent_name__c,
+    SUM(PlayerVsOpponent__dll.goals__c) AS goals__c,
+    SUM(PlayerVsOpponent__dll.xg_total__c) AS xg_total__c,
+    SUM(PlayerVsOpponent__dll.shots__c) AS shots__c,
+    SUM(PlayerVsOpponent__dll.matches_played__c) AS matches_played__c
+FROM PlayerVsOpponent__dll
+JOIN UnifiedPlayer__dlm ON UnifiedPlayer__dlm.source_player_name__c = PlayerVsOpponent__dll.player__c
+JOIN UnifiedTeam__dlm ON UnifiedTeam__dlm.source_team_name__c = PlayerVsOpponent__dll.opponent__c
+GROUP BY unified_player_id__c, player_name__c, opponent_id__c, opponent_name__c</sqlExpression>
+</CalculatedInsight>

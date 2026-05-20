@@ -1,0 +1,61 @@
+<template>
+    <article class="second-screen">
+        <header class="score-strip">
+            <template if:true={liveSnapshot.isLive}>
+                <span class="fixture">{liveSnapshot.fixtureLabel}</span>
+                <span class="goals">{liveSnapshot.goals}</span>
+                <span class="meta">{liveSnapshot.shots} shots · last event {liveSnapshot.lastEventAt}</span>
+            </template>
+            <template if:false={liveSnapshot.isLive}>
+                <span class="fixture">No live match in progress</span>
+                <span class="meta">Ask any historical or tactical question below.</span>
+            </template>
+        </header>
+
+        <section class="chat" aria-label="Agent chat">
+            <ul class="messages">
+                <template for:each={messages} for:item="msg">
+                    <li key={msg.id} class={msg.cssClass}>
+                        <p class="body">{msg.body}</p>
+                        <template if:true={msg.citation}>
+                            <p class="citation">
+                                <span class="citation-label">Cited:</span>
+                                <a href={msg.citationUrl} target="_blank" rel="noopener">{msg.citation}</a>
+                            </p>
+                        </template>
+                    </li>
+                </template>
+                <template if:true={isThinking}>
+                    <li class="message agent thinking" aria-live="polite">
+                        <p class="body">...</p>
+                    </li>
+                </template>
+            </ul>
+
+            <form class="composer" onsubmit={handleSend}>
+                <input
+                    type="text"
+                    placeholder="Ask about any EPL match, player, or tactic..."
+                    value={pendingInput}
+                    onchange={handleInputChange}
+                    aria-label="Your question"
+                    disabled={isThinking} />
+                <button type="submit" disabled={isThinking}>Ask</button>
+            </form>
+        </section>
+
+        <footer class="trending" aria-label="Trending questions">
+            <p class="trending-label">Try:</p>
+            <ul>
+                <template for:each={trendingPrompts} for:item="prompt">
+                    <li key={prompt}>
+                        <button
+                            type="button"
+                            data-prompt={prompt}
+                            onclick={handleTrendingClick}>{prompt}</button>
+                    </li>
+                </template>
+            </ul>
+        </footer>
+    </article>
+</template>

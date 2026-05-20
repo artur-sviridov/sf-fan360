@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CalculatedInsight xmlns="http://soap.sforce.com/2006/04/metadata">
+    <calculationFrequency>FiveMinutes</calculationFrequency>
+    <dataSpace>default</dataSpace>
+    <description>Rolling 60-second aggregation over LiveEvents__dlm. Surfaces current xG, shots-on-target, and event counts per match for the second-screen UI.</description>
+    <label>Live Match Snapshot</label>
+    <masterLabel>Live Match Snapshot</masterLabel>
+    <sqlExpression>SELECT
+    match_id__c,
+    fixture_label__c,
+    COUNT(*) AS events__c,
+    SUM(CASE WHEN event_type__c = 'Shot' THEN 1 ELSE 0 END) AS shots__c,
+    SUM(CASE WHEN event_type__c = 'Goal' THEN 1 ELSE 0 END) AS goals__c,
+    SUM(CASE WHEN event_type__c = 'Yellow Card' THEN 1 ELSE 0 END) AS yellow_cards__c,
+    MAX(received_at__c) AS last_event_at__c
+FROM LiveEvents__dlm
+WHERE received_at__c &gt; CURRENT_TIMESTAMP - INTERVAL '60' MINUTE
+GROUP BY match_id__c, fixture_label__c</sqlExpression>
+</CalculatedInsight>
