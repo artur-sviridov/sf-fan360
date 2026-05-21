@@ -1,9 +1,6 @@
-# Fan360 Labs - Second-Screen EPL Broadcast Agent (Scenario 7)
+# Fan360 - Second-Screen EPL Broadcast Agent
 
 > A free-tier, end-to-end Salesforce + GCP build of an Agentforce-powered second-screen experience for English Premier League broadcasts. Built as a portfolio piece for a Salesforce Forward Deployed Engineer / Customer Success Architect / Agentforce Solution Engineer track.
-
-This repository implements **Scenario 7** of the [FDE Roadmap and Pet Project plan](.cursor/plans/fde_roadmap_and_pet_project_1af7eb8d.plan.md)  
-following the detailed build plan in [scenario_7_second_screen_plan_e9f7eb0c.plan.md](.cursor/plans/scenario_7_second_screen_plan_e9f7eb0c.plan.md).
 
 ## What it does
 
@@ -62,8 +59,6 @@ flowchart LR
 
 
 
-Full reference architecture and decision rationale in [the build plan](.cursor/plans/scenario_7_second_screen_plan_e9f7eb0c.plan.md).
-
 ## Repository layout
 
 
@@ -85,8 +80,8 @@ Full reference architecture and decision rationale in [the build plan](.cursor/p
 
 Full step-by-step provisioning lives in [docs/runbooks/phase0-provisioning.md](docs/runbooks/phase0-provisioning.md). The condensed version:
 
-1. **Salesforce Developer Edition with Agentforce + Data Cloud.** Sign up at [developer.salesforce.com](https://developer.salesforce.com/form/developer-signup/?d=pb&bc=HA), authorize with   
- `sf org login web -a football_agent`.
+1. **Salesforce Developer Edition with Agentforce + Data Cloud.** Sign up at [developer.salesforce.com](https://developer.salesforce.com/form/developer-signup/?d=pb&bc=HA), authorize with
+  sf org login web -a football_agent`.
 2. **GCP project.** Create project ID `sf-fan360` (see [phase 0 runbook](docs/runbooks/phase0-provisioning.md)). Use a fresh Google account or harden a personal one; defer billing until Phase 2.
 3. **Local toolchain.** Python 3.11+, Node 22+, Salesforce CLI, gcloud CLI.
 4. **Configure environment.** `cp .env.example .env`, fill in API keys.
