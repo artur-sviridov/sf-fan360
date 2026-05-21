@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Body__c</fullName>
+    <description
+  >Full chunk text. Indexed by Knowledge search and by Data Cloud Vector DB.</description>
+    <externalId>false</externalId>
+    <label>Body</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <length>32768</length>
+    <visibleLines>20</visibleLines>
+</CustomField>

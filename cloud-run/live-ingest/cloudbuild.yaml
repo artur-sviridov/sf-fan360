@@ -1,0 +1,46 @@
+# Cloud Build pipeline for the live-ingest service.
+# Triggered manually with:
+#   gcloud builds submit cloud-run/live-ingest \
+#       --config cloud-run/live-ingest/cloudbuild.yaml \
+#       --substitutions _REGION=europe-west1
+substitutions:
+  _SERVICE: live-ingest
+  _REGION: europe-west1
+  _SA: s7-live-ingest
+
+steps:
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --tag
+      - europe-west1-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$SHORT_SHA
+      - cloud-run/live-ingest
+
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - europe-west1-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$SHORT_SHA
+
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud run deploy $_SERVICE \
+          --image europe-west1-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$SHORT_SHA \
+          --region $_REGION \
+          --service-account $_SA@$PROJECT_ID.iam.gserviceaccount.com \
+          --no-allow-unauthenticated \
+          --set-env-vars BQ_DATASET_RAW=sf_fan360_raw,BQ_LOCATION=EU,GCP_PROJECT_ID=$PROJECT_ID \
+          --set-secrets API_FOOTBALL_KEY=api-football-key:latest,FOOTBALL_DATA_API_KEY=football-data-key:latest \
+          --cpu 1 --memory 512Mi --concurrency 40 --timeout 60s \
+          --min-instances 0 --max-instances 3
+
+images:
+  - europe-west1-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$SHORT_SHA
+
+options:
+  logging: CLOUD_LOGGING_ONLY
