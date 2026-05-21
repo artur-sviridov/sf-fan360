@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
@@ -26,7 +26,7 @@ class LiveEvent(BaseModel):
     team: str | None = None
     player: str | None = None
     detail: dict[str, Any] = Field(default_factory=dict)
-    received_at: datetime = Field(default_factory=lambda: datetime.now(tz=timezone.utc))
+    received_at: datetime = Field(default_factory=lambda: datetime.now(tz=UTC))
 
     def to_bq_row(self) -> dict[str, Any]:
         row = self.model_dump()

@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CalculatedInsight xmlns="http://soap.sforce.com/2006/04/metadata">
     <calculationFrequency>FiveMinutes</calculationFrequency>
     <dataSpace>default</dataSpace>
-    <description>Rolling 60-second aggregation over LiveEvents__dlm. Surfaces current xG, shots-on-target, and event counts per match for the second-screen UI.</description>
+    <description
+  >Rolling 60-second aggregation over LiveEvents__dlm. Surfaces current xG, shots-on-target, and event counts per match for the second-screen UI.</description>
     <label>Live Match Snapshot</label>
     <masterLabel>Live Match Snapshot</masterLabel>
     <sqlExpression>SELECT

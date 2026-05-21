@@ -9,7 +9,6 @@ Pulls match-level xG summaries for the EPL from 2014/15 onward.
 from __future__ import annotations
 
 import logging
-from collections.abc import Iterable
 from pathlib import Path
 
 import pandas as pd
@@ -73,7 +72,7 @@ def fetch(
             continue
         try:
             rows = _fetch_season_matches(season)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logger.warning("understat: season %s failed: %s", season, exc)
             continue
         df = pd.DataFrame(rows)

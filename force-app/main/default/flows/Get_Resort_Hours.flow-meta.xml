@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>65.0</apiVersion>
-    <description>Returns resort facility hours and reservation requirements based on activity type and day of week. Self-contained with no external dependencies.</description>
+    <description
+  >Returns resort facility hours and reservation requirements based on activity type and day of week. Self-contained with no external dependencies.</description>
     <interviewLabel>Get Resort Hours {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Get Resort Hours</label>
     <processMetadataValues>
@@ -28,7 +29,7 @@
         <isInput>true</isInput>
         <isOutput>false</isOutput>
         <value>
-            <stringValue></stringValue>
+            <stringValue />
         </value>
     </variables>
     <variables>
@@ -38,7 +39,7 @@
         <isInput>true</isInput>
         <isOutput>false</isOutput>
         <value>
-            <stringValue></stringValue>
+            <stringValue />
         </value>
     </variables>
 

@@ -144,6 +144,9 @@ gcp-creds.json
 *.swo
 .vscode/settings.local.json
 
+# Personal notes (not part of the repo)
+Salesforce FDE Career and Pet Project.md
+
 # Cursor
 .cursor/
 

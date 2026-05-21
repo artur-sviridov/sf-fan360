@@ -59,7 +59,7 @@ def embed_chunks(chunks: list[dict[str, Any]], *, sleep: float = 0.2) -> pd.Data
     for i, c in enumerate(chunks):
         try:
             vec = embed_one(c["text"])
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logger.error("embed: chunk %s failed: %s", c.get("chunk_id"), exc)
             continue
         row = dict(c)

@@ -1,14 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
     <activeVersionIdentifier>1</activeVersionIdentifier>
-    <description>Generate a three-sentence summary of an EPL match using Data Cloud match record + recent events + top tactical-context vector hits.</description>
+    <description
+  >Generate a three-sentence summary of an EPL match using Data Cloud match record + recent events + top tactical-context vector hits.</description>
     <developerName>Generate_Match_Summary</developerName>
     <masterLabel>Generate Match Summary</masterLabel>
     <relatedEntity>Match__dlm</relatedEntity>
     <type>flex</type>
     <visibility>Global</visibility>
     <templateVersions>
-        <content>You are an EPL match analyst writing for a fan watching on a second-screen app.
+        <content
+    >You are an EPL match analyst writing for a fan watching on a second-screen app.
 
 Inputs you have:
 - Match facts (from Data Cloud Match__dlm record): {!$Input:Match.home_team__c} vs {!$Input:Match.away_team__c}, season {!$Input:Match.season__c}, final score {!$Input:Match.home_score__c}-{!$Input:Match.away_score__c}, date {!$Input:Match.match_date__c}.

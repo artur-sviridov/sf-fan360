@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CalculatedInsight xmlns="http://soap.sforce.com/2006/04/metadata">
     <calculationFrequency>Daily</calculationFrequency>
     <dataSpace>default</dataSpace>
-    <description>Per-player per-opponent aggregates. Powers the reference query "Has anyone scored more goals against Chelsea than Salah?"</description>
+    <description
+  >Per-player per-opponent aggregates. Powers the reference query "Has anyone scored more goals against Chelsea than Salah?"</description>
     <label>Player vs Opponent</label>
     <masterLabel>Player vs Opponent</masterLabel>
     <sqlExpression>SELECT

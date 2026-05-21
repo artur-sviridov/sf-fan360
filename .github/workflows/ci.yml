@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python CI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install root package (ETL + dev tools)
+        run: pip install -e ".[dev]"
+
+      - name: Install Cloud Run test deps
+        run: |
+          pip install -e "./cloud-run/live-ingest[dev]"
+          pip install -e "./cloud-run/llm-shim[dev]"
+
+      - name: Ruff
+        run: >
+          ruff check etl cloud-run/live-ingest/app cloud-run/llm-shim/app
+          --ignore E501,PLC0415,PLR2004,B008,PLR0913
+
+      - name: Pytest (ETL)
+        run: pytest tests/
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ""
+
+      - name: Pytest (live-ingest)
+        working-directory: cloud-run/live-ingest
+        run: pytest
+
+      - name: Pytest (llm-shim)
+        working-directory: cloud-run/llm-shim
+        run: pytest
+
+  format:
+    name: Format check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm install
+      - run: npx prettier --check "force-app/**/*.{cls,cmp,component,css,html,js,json,xml}"

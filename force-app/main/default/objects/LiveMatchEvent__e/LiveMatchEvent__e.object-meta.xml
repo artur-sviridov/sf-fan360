@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <deploymentStatus>Deployed</deploymentStatus>
-    <description>Platform event fan-out for live match snapshots. Published by the live-ingest Cloud Run service whenever a goal/card/sub fires; the second-screen LWC subscribes to refresh the score strip.</description>
+    <description
+  >Platform event fan-out for live match snapshots. Published by the live-ingest Cloud Run service whenever a goal/card/sub fires; the second-screen LWC subscribes to refresh the score strip.</description>
     <eventType>HighVolume</eventType>
     <label>Live Match Event</label>
     <pluralLabel>Live Match Events</pluralLabel>

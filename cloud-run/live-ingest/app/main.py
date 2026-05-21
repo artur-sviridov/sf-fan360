@@ -27,7 +27,7 @@ _last_fpl_snapshot: dict[int, dict[int, dict[str, Any]]] = {}
 async def _startup() -> None:
     try:
         ensure_live_events_table()
-    except Exception as exc:  # noqa: BLE001 - log and continue; service still serves /health
+    except Exception as exc:
         logger.error("startup: ensure_live_events_table failed: %s", exc)
 
 

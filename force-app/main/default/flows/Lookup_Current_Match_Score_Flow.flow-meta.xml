@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>66.0</apiVersion>
-    <description>Optional flow wrapper around LookupCurrentMatchScore. Allows admins to swap the Apex implementation for a no-code Flow without redeploying agent metadata.</description>
-    <interviewLabel>Lookup Current Match Score Flow {!$Flow.CurrentDateTime}</interviewLabel>
+    <description
+  >Optional flow wrapper around LookupCurrentMatchScore. Allows admins to swap the Apex implementation for a no-code Flow without redeploying agent metadata.</description>
+    <interviewLabel
+  >Lookup Current Match Score Flow {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Lookup Current Match Score Flow</label>
     <processMetadataValues>
         <name>BuilderType</name>

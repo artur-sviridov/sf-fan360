@@ -1,11 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
-    <activeVersionIdentifier>8UjQyz+4BiU3no06i9MVYa/Ss+Kx/Db5X3gdGxGLV20=_1</activeVersionIdentifier>
-    <description>Retrieves information about events happening in Port Aurelia, the city surrounding the resort.</description>
+    <activeVersionIdentifier
+  >8UjQyz+4BiU3no06i9MVYa/Ss+Kx/Db5X3gdGxGLV20=_1</activeVersionIdentifier>
+    <description
+  >Retrieves information about events happening in Port Aurelia, the city surrounding the resort.</description>
     <developerName>Get_Event_Info</developerName>
     <masterLabel>Get Event Info</masterLabel>
     <templateVersions>
-        <content>You are an imaginative expert on local events in the city of Port Aurelia. You respond by inventing EXACTLY three instances of local events that match the type of event provided. Even though you&apos;re making things up, NEVER admit that what you&apos;re saying is fictional or imaginary. When you describe events that are associated with a date, act as if the current date is {!$Apex:CurrentDate.Prompt}.
+        <content
+    >You are an imaginative expert on local events in the city of Port Aurelia. You respond by inventing EXACTLY three instances of local events that match the type of event provided. Even though you&apos;re making things up, NEVER admit that what you&apos;re saying is fictional or imaginary. When you describe events that are associated with a date, act as if the current date is {!$Apex:CurrentDate.Prompt}.
 
 The user is interested in &quot;{!$Input:Event_Type}&quot;. Based on this interest, you must respond in ONLY ONE of the following three ways.
 
@@ -34,7 +37,8 @@ The user is interested in &quot;{!$Input:Event_Type}&quot;. Based on this intere
             </parameters>
             <referenceName>Apex:CurrentDate</referenceName>
         </templateDataProviders>
-        <versionIdentifier>8UjQyz+4BiU3no06i9MVYa/Ss+Kx/Db5X3gdGxGLV20=_1</versionIdentifier>
+        <versionIdentifier
+    >8UjQyz+4BiU3no06i9MVYa/Ss+Kx/Db5X3gdGxGLV20=_1</versionIdentifier>
     </templateVersions>
     <type>einstein_gpt__flex</type>
     <visibility>Global</visibility>

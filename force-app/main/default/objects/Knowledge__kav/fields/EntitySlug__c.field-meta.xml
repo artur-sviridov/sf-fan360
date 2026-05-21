@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>EntitySlug__c</fullName>
-    <description>Slug of the entity this chunk belongs to (e.g. "mohamed-salah"). Used by agent prompts to scope semantic search.</description>
+    <description
+  >Slug of the entity this chunk belongs to (e.g. "mohamed-salah"). Used by agent prompts to scope semantic search.</description>
     <externalId>true</externalId>
     <label>Entity Slug</label>
     <length>120</length>

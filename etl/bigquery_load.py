@@ -19,7 +19,6 @@ from __future__ import annotations
 
 import logging
 import re
-from collections.abc import Iterable
 from pathlib import Path
 
 import pandas as pd
@@ -153,7 +152,6 @@ def run_sql_file(path: Path | str) -> None:
     Also tolerates the literal `sf-fan360` from hand-written templates -
     rewritten to the configured project ID so the templates remain readable.
     """
-    from google.cloud import bigquery  # type: ignore[import-not-found]
 
     client = _bq_client()
     sql = Path(path).read_text(encoding="utf-8")

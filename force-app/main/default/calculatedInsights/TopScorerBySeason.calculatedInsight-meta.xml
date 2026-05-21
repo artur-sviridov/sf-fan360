@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CalculatedInsight xmlns="http://soap.sforce.com/2006/04/metadata">
     <calculationFrequency>Daily</calculationFrequency>
     <dataSpace>default</dataSpace>
-    <description>Top 50 scorers per season. Powers the leaderboard query.</description>
+    <description
+  >Top 50 scorers per season. Powers the leaderboard query.</description>
     <label>Top Scorer By Season</label>
     <masterLabel>Top Scorer By Season</masterLabel>
     <sqlExpression>SELECT
