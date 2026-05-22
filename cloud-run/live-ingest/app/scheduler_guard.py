@@ -26,9 +26,10 @@ from __future__ import annotations
 
 import json
 import logging
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
-from typing import Any, Iterable
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
 import httpx
 from dateutil import parser as date_parser
@@ -93,8 +94,8 @@ def _parse_utc(value: str | None) -> datetime | None:
     except (ValueError, TypeError):
         return None
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc)
+        dt = dt.replace(tzinfo=UTC)
+    return dt.astimezone(UTC)
 
 
 def poll_window(match: dict[str, Any], now: datetime) -> MatchWindow | None:
@@ -121,8 +122,7 @@ def poll_window(match: dict[str, Any], now: datetime) -> MatchWindow | None:
 
     if status in _IN_PLAY_STATUSES:
         live_end = now + post
-        if live_end > window_end:
-            window_end = live_end
+        window_end = max(window_end, live_end)
 
     return MatchWindow(
         match_id=str(match.get("id") or ""),
@@ -198,12 +198,12 @@ def fetch_pl_matches(
     if not settings.football_data_api_key:
         raise RuntimeError("football-data API key not configured")
 
-    today = datetime.now(timezone.utc).date()
+    today = datetime.now(UTC).date()
     date_from = date_from or datetime.combine(
-        today - timedelta(days=settings.guard_lookback_days), datetime.min.time(), tzinfo=timezone.utc
+        today - timedelta(days=settings.guard_lookback_days), datetime.min.time(), tzinfo=UTC
     )
     date_to = date_to or datetime.combine(
-        today + timedelta(days=settings.guard_lookahead_days), datetime.min.time(), tzinfo=timezone.utc
+        today + timedelta(days=settings.guard_lookahead_days), datetime.min.time(), tzinfo=UTC
     )
 
     params = {
@@ -246,7 +246,6 @@ def _set_job_body(client: Any, job_name: str, gw: int) -> str | None:
     Returns the gw previously encoded in the body (or ``None`` when we
     cannot tell), so callers can avoid noisy ``update_job`` calls.
     """
-    from google.cloud.scheduler_v1 import Job  # type: ignore[import-not-found]
     from google.protobuf.field_mask_pb2 import FieldMask  # type: ignore[import-not-found]
 
     job = client.get_job(name=job_name)
@@ -271,11 +270,11 @@ def sync_fpl_poll_scheduler(*, now: datetime | None = None) -> SyncSummary:
     Designed to be called every few minutes by ``fpl-poll-guard``. Any
     error pauses the poll job and is reflected in the returned summary.
     """
-    now = now or datetime.now(timezone.utc)
+    now = now or datetime.now(UTC)
 
     try:
         matches = fetch_pl_matches()
-    except Exception as exc:  # noqa: BLE001 - we want to fail safe
+    except Exception as exc:
         logger.exception("scheduler_guard: fetch_pl_matches failed: %s", exc)
         return _safe_pause(reason=f"football-data error: {exc}")
 
@@ -290,7 +289,7 @@ def sync_fpl_poll_scheduler(*, now: datetime | None = None) -> SyncSummary:
     try:
         client = _scheduler_client()
         job_name = _job_path(client)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.exception("scheduler_guard: client init failed: %s", exc)
         summary.action = "error"
         summary.detail["error"] = str(exc)
@@ -301,7 +300,7 @@ def sync_fpl_poll_scheduler(*, now: datetime | None = None) -> SyncSummary:
             client.pause_job(name=job_name)
             summary.action = "paused"
             summary.job_state = "PAUSED"
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logger.exception("scheduler_guard: pause failed: %s", exc)
             summary.action = "error"
             summary.detail["error"] = f"pause: {exc}"
@@ -337,7 +336,7 @@ def sync_fpl_poll_scheduler(*, now: datetime | None = None) -> SyncSummary:
         client.resume_job(name=job_name)
         summary.action = "resumed"
         summary.job_state = "ENABLED"
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.exception("scheduler_guard: resume failed: %s", exc)
         summary.action = "error"
         summary.detail["error"] = f"resume: {exc}"
@@ -360,14 +359,14 @@ def _safe_pause(
         try:
             client = _scheduler_client()
             job_name = _job_path(client)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logger.exception("scheduler_guard: client init failed during safe pause: %s", exc)
             summary.action = "error"
             summary.detail["error"] = str(exc)
             return summary
     try:
         client.pause_job(name=job_name)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.exception("scheduler_guard: safe pause failed: %s", exc)
         summary.action = "error"
         summary.detail["error"] = f"safe-pause: {exc}"
