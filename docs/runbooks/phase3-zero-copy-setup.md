@@ -4,7 +4,7 @@
 
 **Time budget.** ~4 hours. Step 2 (OIDC handshake) is the single hardest hour of the entire build; the rest is mechanical.
 
-**Prerequisites.** Phase 2 exit gate holds. Cloud Scheduler jobs for live polling are configured.
+**Prerequisites.** Phase 2 exit gate holds. Both Cloud Scheduler jobs are configured: `fpl-poll` (1/min, POST `/webhook/fpl`) and `fpl-poll-guard` (every 5 min, POST `/scheduler/sync`), with the guard auto-toggling `fpl-poll` based on the EPL calendar.
 
 ---
 

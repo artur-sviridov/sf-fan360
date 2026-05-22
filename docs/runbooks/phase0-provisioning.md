@@ -96,12 +96,21 @@ gcloud projects add-iam-policy-binding sf-fan360 `
     --member="serviceAccount:$SA" `
     --role="roles/storage.objectAdmin"
 
+gcloud projects add-iam-policy-binding sf-fan360 `
+    --member="serviceAccount:$SA" `
+    --role="roles/storage.bucketViewer"
+
 gcloud iam service-accounts keys create .secrets\etl-service.json `
     --iam-account=$SA
 ```
 
 The JSON key is now at `.secrets/etl-service.json` and is git-ignored. **If you ever accidentally commit it, rotate immediately via **  
 `gcloud iam service-accounts keys delete` **and create a fresh one.**
+
+> Note: Phase 2 adds a separate `live-ingest@sf-fan360.iam.gserviceaccount.com`
+> service account with `roles/cloudscheduler.admin` so the live-ingest
+> service can pause/resume the FPL poll job from inside Cloud Run.
+> `scripts/gcp-setup.ps1` (run in Phase 2) creates that account.
 
 **EVIDENCE.** Screenshot the IAM page showing the service account with its three roles -> `docs/trust-layer-evidence/00-gcp-iam.png`.
 

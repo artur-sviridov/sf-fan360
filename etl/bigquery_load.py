@@ -128,17 +128,27 @@ def create_external_table(table_id: str, gcs_pattern: str) -> None:
     """Create an external BigQuery table over a GCS Parquet folder.
 
     Free, recompute-on-query. Use in cloud mode (Phase 2 onward).
+
+    Parquet is written with Hive layout (e.g. ``season=2010-11/``). PyArrow
+    drops partition keys from file bodies, so we enable Hive partitioning on
+    the external table—same idea as ``load_parquet_native`` for ``gs://`` URIs.
     """
     from google.cloud import bigquery  # type: ignore[import-not-found]
 
     client = _bq_client()
+    prefix = gcs_pattern.rstrip("/") + "/"
     external_config = bigquery.ExternalConfig(bigquery.ExternalSourceFormat.PARQUET)
-    external_config.source_uris = [gcs_pattern.rstrip("/") + "/*.parquet"]
+    external_config.source_uris = [prefix + "*.parquet"]
+    external_config.autodetect = True
+    hive = bigquery.HivePartitioningOptions()
+    hive.mode = "AUTO"
+    hive.source_uri_prefix = prefix
+    external_config.hive_partitioning = hive
     table = bigquery.Table(table_id)
     table.external_data_configuration = external_config
     client.delete_table(table_id, not_found_ok=True)
     client.create_table(table)
-    logger.info("bigquery: external table %s -> %s", table_id, gcs_pattern)
+    logger.info("bigquery: external table %s -> %s (hive AUTO)", table_id, gcs_pattern)
 
 
 def run_sql_file(path: Path | str) -> None:
