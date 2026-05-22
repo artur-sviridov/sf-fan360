@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Second Screen Chat</masterLabel>
+    <description
+  >Public second-screen LWC: live score strip, agent chat embed, and trending-question carousel.</description>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__Tab</target>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property
+        name="agentApiName"
+        type="String"
+        default="Broadcast_Metadata_Agent"
+        label="Agent API Name"
+        description="The developer name of the Agentforce agent to invoke."
+      />
+            <property
+        name="favoriteTeam"
+        type="String"
+        default=""
+        label="Favorite Team"
+        description="Pre-populate the agent variable favorite_team for guest users."
+      />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

@@ -1,0 +1,35 @@
+[project]
+name = "fan360-labs-live-ingest"
+version = "0.1.0"
+description = "Cloud Run service: webhooks for EPL live events"
+requires-python = ">=3.11,<3.14"
+
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "pydantic>=2.7",
+  "pydantic-settings>=2.4",
+  "google-cloud-bigquery>=3.25",
+  "google-cloud-scheduler>=2.14",
+  "google-cloud-secret-manager>=2.20",
+  "httpx>=0.27",
+  "tenacity>=8.5",
+  "python-dateutil>=2.9",
+  "orjson>=3.10",
+  "cryptography>=43",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3",
+  "pytest-asyncio>=0.23",
+  "httpx>=0.27",
+  "respx>=0.21",
+]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]

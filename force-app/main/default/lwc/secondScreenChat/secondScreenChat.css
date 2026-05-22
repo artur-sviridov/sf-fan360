@@ -1,0 +1,198 @@
+/* secondScreenChat - dark broadcaster styling */
+:host {
+  display: block;
+  color-scheme: dark light;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    sans-serif;
+  color: #f4f6fb;
+  background: #0b0f1a;
+}
+
+.second-screen {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.score-strip {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.85rem 1rem;
+  background: linear-gradient(180deg, #131a2e 0%, #0e1426 100%);
+  border-radius: 14px;
+  border: 1px solid #1f2740;
+}
+
+.score-strip .fixture {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #f4f6fb;
+}
+
+.score-strip .goals {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #80e0a7;
+}
+
+.score-strip .meta {
+  color: #99a5c4;
+  font-size: 0.85rem;
+}
+
+.chat {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 0.5rem;
+  background: #131a2e;
+  border-radius: 14px;
+  border: 1px solid #1f2740;
+  padding: 1rem;
+  min-height: 0;
+}
+
+.messages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.message {
+  max-width: 85%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 12px;
+  line-height: 1.4;
+  font-size: 0.95rem;
+}
+
+.message.user {
+  align-self: flex-end;
+  background: #1d2a4d;
+  color: #cfe1ff;
+  border: 1px solid #2c3f6c;
+}
+
+.message.agent {
+  align-self: flex-start;
+  background: #0d1426;
+  border: 1px solid #1f2740;
+}
+
+.message.agent .citation {
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  color: #8aa1d6;
+}
+
+.message.agent .citation-label {
+  color: #99a5c4;
+  margin-right: 0.25rem;
+}
+
+.message.agent.error {
+  border-color: #6b1f2f;
+  background: #2a0d12;
+}
+
+.message.agent.thinking .body::after {
+  content: "";
+  display: inline-block;
+  width: 0.6em;
+  border-bottom: 2px solid #f4f6fb;
+  animation: dotpulse 1.2s infinite;
+}
+
+@keyframes dotpulse {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.composer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+}
+
+.composer input {
+  background: #0b0f1a;
+  color: #f4f6fb;
+  border: 1px solid #2c3f6c;
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.95rem;
+}
+
+.composer input:focus {
+  outline: 2px solid #4d7bff;
+  outline-offset: 1px;
+}
+
+.composer button {
+  padding: 0 1rem;
+  background: #4d7bff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.composer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.trending {
+  padding-top: 0.25rem;
+}
+
+.trending .trending-label {
+  margin: 0 0 0.4rem 0;
+  color: #99a5c4;
+  font-size: 0.85rem;
+}
+
+.trending ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.trending button {
+  background: transparent;
+  color: #cfe1ff;
+  border: 1px solid #2c3f6c;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.trending button:hover {
+  background: #1d2a4d;
+}

@@ -1,0 +1,46 @@
+# Cloud Build pipeline for the live-ingest service.
+# Manual submit from repo root (SHORT_SHA is empty unless you pass _TAG):
+#   gcloud builds submit . --config cloud-run/live-ingest/cloudbuild.yaml `
+#       --substitutions=_TAG=manual,_REGION=europe-central2
+substitutions:
+  _SERVICE: live-ingest
+  _REGION: europe-central2
+  _SA: live-ingest
+  _TAG: latest
+
+steps:
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --tag
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$_TAG
+      - cloud-run/live-ingest
+
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$_TAG
+
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud run deploy $_SERVICE \
+          --image ${_REGION}-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$_TAG \
+          --region $_REGION \
+          --service-account $_SA@$PROJECT_ID.iam.gserviceaccount.com \
+          --no-allow-unauthenticated \
+          --set-env-vars BQ_DATASET_RAW=sf_fan360_raw,BQ_LOCATION=EU,GCP_PROJECT_ID=$PROJECT_ID,SCHEDULER_LOCATION=$_REGION,FPL_POLL_JOB_ID=fpl-poll,PRE_KICKOFF_MINUTES=10,POST_MATCH_MINUTES=15,MATCH_DURATION_MINUTES=105 \
+          --set-secrets API_FOOTBALL_KEY=api-football-key:latest,FOOTBALL_DATA_API_KEY=football-data-key:latest \
+          --cpu 1 --memory 512Mi --concurrency 40 --timeout 60s \
+          --min-instances 0 --max-instances 3
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$_TAG
+
+options:
+  logging: CLOUD_LOGGING_ONLY

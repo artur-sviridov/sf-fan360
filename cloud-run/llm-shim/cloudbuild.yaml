@@ -1,0 +1,42 @@
+substitutions:
+  _SERVICE: llm-shim
+  _REGION: europe-central2
+  _SA: llm-shim
+  _TAG: latest
+
+steps:
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --tag
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$_TAG
+      - cloud-run/llm-shim
+
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$_TAG
+
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud run deploy $_SERVICE \
+          --image ${_REGION}-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$_TAG \
+          --region $_REGION \
+          --service-account $_SA@$PROJECT_ID.iam.gserviceaccount.com \
+          --no-allow-unauthenticated \
+          --set-secrets GEMINI_API_KEY=gemini-api-key:latest,SHIM_SHARED_SECRET=llm-shim-shared-secret:latest,PGVECTOR_DSN=pgvector-dsn:latest \
+          --set-env-vars PRIMARY_MODEL=gemini-2.5-flash,FALLBACK_MODEL=gemini-2.5-flash-lite,EMBED_MODEL=text-embedding-004 \
+          --cpu 1 --memory 512Mi --concurrency 80 --timeout 60s \
+          --min-instances 0 --max-instances 5
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$_TAG
+
+options:
+  logging: CLOUD_LOGGING_ONLY

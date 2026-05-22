@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SourceUrl__c</fullName>
+    <description
+  >Source URL for the originating Wikipedia article; used for citations in agent responses.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>https://en.wikipedia.org/wiki/...</inlineHelpText>
+    <label>Source URL</label>
+    <length>500</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Url</type>
+</CustomField>

@@ -1,0 +1,53 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Fan 360 Labs Live Events Ingestion",
+    "description": "Schema for live EPL events streamed into Salesforce Data Cloud via the Ingestion API.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/LiveEvents": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/LiveEvent" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "202": { "description": "Accepted" } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LiveEvent": {
+        "type": "object",
+        "required": ["event_id", "source", "match_id", "event_type", "received_at"],
+        "properties": {
+          "event_id":      { "type": "string", "description": "Globally unique event identifier." },
+          "source":        { "type": "string", "enum": ["api-football", "fpl"] },
+          "mode":          { "type": "string", "enum": ["live"] },
+          "match_id":      { "type": "string" },
+          "fixture_label": { "type": "string" },
+          "minute":        { "type": "integer", "format": "int32" },
+          "second":        { "type": "integer", "format": "int32" },
+          "period":        { "type": "integer", "format": "int32" },
+          "event_type":    { "type": "string", "description": "Goal, Pass, Shot, Yellow Card, etc." },
+          "team":          { "type": "string" },
+          "player":        { "type": "string" },
+          "detail":        { "type": "string", "description": "JSON-encoded supplemental payload." },
+          "received_at":   { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CalculatedInsight xmlns="http://soap.sforce.com/2006/04/metadata">
+    <calculationFrequency>Daily</calculationFrequency>
+    <dataSpace>default</dataSpace>
+    <description
+  >Top 50 scorers per season. Powers the leaderboard query.</description>
+    <label>Top Scorer By Season</label>
+    <masterLabel>Top Scorer By Season</masterLabel>
+    <sqlExpression>SELECT
+    season__c,
+    UnifiedPlayer__dlm.unified_player_id__c AS unified_player_id__c,
+    UnifiedPlayer__dlm.player_name__c AS player_name__c,
+    team__c,
+    goals__c,
+    xg_total__c,
+    shots__c,
+    ROW_NUMBER() OVER (PARTITION BY season__c ORDER BY goals__c DESC) AS rank__c
+FROM PlayerSeasonStats__dll
+JOIN UnifiedPlayer__dlm ON UnifiedPlayer__dlm.source_player_name__c = PlayerSeasonStats__dll.player__c
+QUALIFY rank__c &lt;= 50</sqlExpression>
+</CalculatedInsight>

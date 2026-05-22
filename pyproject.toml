@@ -1,0 +1,98 @@
+[project]
+name = "fan360-labs-etl"
+version = "0.1.0"
+description = "ETL and tooling for the Scenario 7 Second-Screen EPL Broadcast Agent on Salesforce + GCP free tier"
+requires-python = ">=3.11,<3.14"
+license = { text = "MIT" }
+authors = [{ name = "Fan360 Labs" }]
+readme = "README.md"
+
+dependencies = [
+  # HTTP + retry
+  "httpx>=0.27",
+  "tenacity>=8.5",
+
+  # Data
+  "pandas>=2.2",
+  "pyarrow>=16",
+  "polars>=1.0",
+
+  # Source-specific clients
+  "understatapi>=0.7",
+  "wikipedia-api>=0.6",
+  "requests>=2.32",
+
+  # Wiki markup stripping
+  "mwparserfromhell>=0.6",
+
+  # GCP
+  "google-cloud-bigquery>=3.25",
+  "pandas-gbq>=0.26.1",
+  "google-cloud-storage>=2.18",
+  "google-cloud-secret-manager>=2.20",
+
+  # Embedding + chunking
+  "langchain-text-splitters>=0.3",
+
+  # CLI / logging
+  "typer>=0.12",
+  "rich>=13.7",
+  "python-dotenv>=1.0",
+  "pydantic>=2.7",
+  "pydantic-settings>=2.4",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3",
+  "pytest-cov>=5.0",
+  "pytest-asyncio>=0.23",
+  "respx>=0.21",
+  "ruff>=0.6",
+  "mypy>=1.11",
+  "ipykernel>=6.29",
+  "jupyter>=1.1",
+]
+
+[project.scripts]
+etl-openfootball = "etl.openfootball:cli"
+etl-understat = "etl.understat:cli"
+etl-wikipedia = "etl.wikipedia:cli"
+etl-bigquery-load = "etl.bigquery_load:cli"
+etl-run-full = "etl.run_full:cli"
+etl-embed = "etl.embed.cli:cli"
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["etl"]
+
+# -----------------------------------------------------------------------------
+# Tooling configuration
+# -----------------------------------------------------------------------------
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["force-app", ".sfdx", ".sf", "node_modules"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "PL", "RUF"]
+ignore = ["PLR0913"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "etl", "cloud-run"]
+addopts = "-q --strict-markers"
+asyncio_mode = "auto"
+
+[tool.mypy]
+python_version = "3.11"
+strict = false
+ignore_missing_imports = true
+exclude = ["force-app", ".sfdx", ".sf"]
+
+[tool.coverage.run]
+source = ["etl"]
+branch = true
