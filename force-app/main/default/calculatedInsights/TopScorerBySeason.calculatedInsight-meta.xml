@@ -3,19 +3,18 @@
     <calculationFrequency>Daily</calculationFrequency>
     <dataSpace>default</dataSpace>
     <description
-  >Top 50 scorers per season. Powers the leaderboard query.</description>
-    <label>Top Scorer By Season</label>
-    <masterLabel>Top Scorer By Season</masterLabel>
+  >Per-season team leaderboard (goals_for, xG, points) from team_season_stats. This project has no player_season_stats mart yet — use Fan360TeamSeasonStats__dlm, not PlayerSeasonStats. Agent applies ORDER BY + LIMIT for top N.</description>
+    <label>Top Teams By Season</label>
+    <masterLabel>Top Teams By Season</masterLabel>
     <sqlExpression>SELECT
-    season__c,
-    UnifiedPlayer__dlm.unified_player_id__c AS unified_player_id__c,
-    UnifiedPlayer__dlm.player_name__c AS player_name__c,
-    team__c,
-    goals__c,
-    xg_total__c,
-    shots__c,
-    ROW_NUMBER() OVER (PARTITION BY season__c ORDER BY goals__c DESC) AS rank__c
-FROM PlayerSeasonStats__dll
-JOIN UnifiedPlayer__dlm ON UnifiedPlayer__dlm.source_player_name__c = PlayerSeasonStats__dll.player__c
-QUALIFY rank__c &lt;= 50</sqlExpression>
+    Fan360TeamSeasonStats__dlm.season__c AS season__c,
+    Fan360Team__dlm.canonical_team_id__c AS canonical_team_id__c,
+    Fan360Team__dlm.team_name__c AS team_name__c,
+    SUM(Fan360TeamSeasonStats__dlm.goals_for__c) AS goals_for__c,
+    SUM(Fan360TeamSeasonStats__dlm.xg_for__c) AS xg_for__c,
+    SUM(Fan360TeamSeasonStats__dlm.points__c) AS points__c
+FROM Fan360TeamSeasonStats__dlm
+JOIN Fan360Team__dlm
+  ON Fan360Team__dlm.source_team_name__c = Fan360TeamSeasonStats__dlm.team__c
+GROUP BY season__c, canonical_team_id__c, team_name__c</sqlExpression>
 </CalculatedInsight>

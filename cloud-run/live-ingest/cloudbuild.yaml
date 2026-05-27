@@ -1,12 +1,16 @@
 # Cloud Build pipeline for the live-ingest service.
-# Manual submit from repo root (SHORT_SHA is empty unless you pass _TAG):
-#   gcloud builds submit . --config cloud-run/live-ingest/cloudbuild.yaml `
-#       --substitutions=_TAG=manual,_REGION=europe-central2
+# Triggered manually with:
+#   gcloud builds submit cloud-run/live-ingest \
+#       --config cloud-run/live-ingest/cloudbuild.yaml \
+#   Submit path becomes the Docker context; use `.` below (not cloud-run/live-ingest).
+#       --substitutions _REGION=europe-central2,_SF_INGEST_URL=https://yourorg.my.salesforce.com
 substitutions:
   _SERVICE: live-ingest
+  _AR_REGION: europe-central2
   _REGION: europe-central2
   _SA: live-ingest
-  _TAG: latest
+  # Data Cloud Ingestion API base URL (no trailing slash), e.g. https://yourorg.my.salesforce.com
+  _SF_INGEST_URL: ""
 
 steps:
   - id: build
@@ -14,14 +18,14 @@ steps:
     args:
       - build
       - --tag
-      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$_TAG
-      - cloud-run/live-ingest
+      - $_AR_REGION-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$BUILD_ID
+      - .
 
   - id: push
     name: gcr.io/cloud-builders/docker
     args:
       - push
-      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$_TAG
+      - $_AR_REGION-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$BUILD_ID
 
   - id: deploy
     name: gcr.io/google.com/cloudsdktool/cloud-sdk
@@ -30,17 +34,17 @@ steps:
       - -c
       - |
         gcloud run deploy $_SERVICE \
-          --image ${_REGION}-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$_TAG \
+          --image $_AR_REGION-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$BUILD_ID \
           --region $_REGION \
           --service-account $_SA@$PROJECT_ID.iam.gserviceaccount.com \
           --no-allow-unauthenticated \
-          --set-env-vars BQ_DATASET_RAW=sf_fan360_raw,BQ_LOCATION=EU,GCP_PROJECT_ID=$PROJECT_ID,SCHEDULER_LOCATION=$_REGION,FPL_POLL_JOB_ID=fpl-poll,PRE_KICKOFF_MINUTES=10,POST_MATCH_MINUTES=15,MATCH_DURATION_MINUTES=105 \
-          --set-secrets API_FOOTBALL_KEY=api-football-key:latest,FOOTBALL_DATA_API_KEY=football-data-key:latest \
+          --set-env-vars BQ_DATASET_RAW=sf_fan360_raw,BQ_LOCATION=EU,GCP_PROJECT_ID=$PROJECT_ID,SF_INGEST_URL=$_SF_INGEST_URL \
+          --set-secrets API_FOOTBALL_KEY=api-football-key:latest,FOOTBALL_DATA_API_KEY=football-data-key:latest,SF_INGEST_CLIENT_ID=sf-ingest-client-id:latest,SF_INGEST_PRIVATE_KEY=sf-ingest-private-key:latest,SF_INGEST_USERNAME=sf-ingest-username:latest \
           --cpu 1 --memory 512Mi --concurrency 40 --timeout 60s \
           --min-instances 0 --max-instances 3
 
 images:
-  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$_TAG
+  - $_AR_REGION-docker.pkg.dev/$PROJECT_ID/$_SERVICE/$_SERVICE:$BUILD_ID
 
 options:
   logging: CLOUD_LOGGING_ONLY
