@@ -25,6 +25,17 @@ class Settings(BaseSettings):
     sf_ingest_url: str | None = Field(default=None)
     sf_ingest_token: str | None = Field(default=None)
 
+    # Cloud Scheduler control for the FPL poll job. The guard endpoint
+    # POST /scheduler/sync uses these to resume the job only inside the
+    # configured pre-kickoff / post-match window.
+    scheduler_location: str = Field(default="europe-central2")
+    fpl_poll_job_id: str = Field(default="fpl-poll")
+    pre_kickoff_minutes: int = Field(default=10)
+    post_match_minutes: int = Field(default=15)
+    match_duration_minutes: int = Field(default=105)
+    guard_lookback_days: int = Field(default=1)
+    guard_lookahead_days: int = Field(default=1)
+
     user_agent: str = "fan360-labs-live-ingest/0.1"
 
 
