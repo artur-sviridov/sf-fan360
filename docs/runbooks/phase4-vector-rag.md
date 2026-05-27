@@ -1,8 +1,6 @@
 # Phase 4 - Knowledge + Vector RAG
 
-**Goal.** Wikipedia narratives chunked, embedded, and queryable by semantic
-search from inside Agentforce. Same chunks also indexed in Salesforce
-Knowledge for native citation rendering.
+**Goal.** Wikipedia narratives chunked, embedded, and queryable by semantic search from inside Agentforce. Same chunks also indexed in Salesforce Knowledge for native citation rendering.
 
 **Time budget.** ~2 hours.
 
@@ -31,7 +29,7 @@ python -m etl.embed.chunker `
     --out data/chunks/wikipedia.jsonl
 ```
 
-Expect ~1,500 chunks for the seed seed lists (~80 entities x ~20 chunks
+Expect ~~1,500 chunks for the seed seed lists (~~80 entities x ~20 chunks
 each). Sanity check:
 
 ```powershell
@@ -49,8 +47,8 @@ python -m etl.embed.embed_gemini `
     --sleep-seconds 0.25
 ```
 
-`text-embedding-004` free tier limit ~1,500 RPD; 1,500 chunks fits in one
-day with 0.25 s sleep (~6 req/s, well under burst limits). If you hit a 429,
+`text-embedding-004` free tier limit ~~1,500 RPD; 1,500 chunks fits in one
+day with 0.25 s sleep (~~6 req/s, well under burst limits). If you hit a 429,
 let the tenacity retry handle it.
 
 ---
@@ -64,12 +62,12 @@ Check whether your DE has Vector DB enabled:
 If the page exists, follow the wizard:
 
 1. Source DMO: `BroadcastKnowledge__dlm` (create via the wizard if not
-   already mapped).
+  already mapped).
 2. Map column `vector` -> embedding vector field.
 3. Map column `text` -> chunk text.
 4. Map columns `entity_slug`, `entity_type` -> metadata filters.
 5. Use built-in `e5-large-v2` embedding (regenerate-on-upsert). Reuses
-   our pre-computed vectors as fallback when external embedding is set.
+  our pre-computed vectors as fallback when external embedding is set.
 6. Run "Index Now". First index takes ~3 min for 1,500 chunks.
 
 **EVIDENCE.** Screenshot the Vector DB index status ->
@@ -81,23 +79,23 @@ If the page exists, follow the wizard:
 
 Only if Vector DB is gated in your DE org.
 
-1. Create a free Supabase project at <https://supabase.com>. Get the
-   connection string (settings -> database -> connection string).
+1. Create a free Supabase project at [https://supabase.com](https://supabase.com). Get the
+  connection string (settings -> database -> connection string).
 2. Enable pgvector extension:
-   ```
+  ```
    create extension if not exists vector;
-   ```
+  ```
 3. Export `PGVECTOR_DSN` in your environment:
-   ```
+  ```
    $env:PGVECTOR_DSN = "postgres://...supabase.co:5432/postgres"
-   ```
+  ```
 4. Upload:
-   ```powershell
+  ```powershell
    python -m etl.embed.upload_to_pgvector `
        --parquet data/embeddings/wikipedia.parquet
-   ```
+  ```
 5. The Phase 5 agent's External Service Action `SemanticSearchKnowledge`
-   points at the llm-shim's `/rag/search` endpoint, which queries this
+  points at the llm-shim's `/rag/search` endpoint, which queries this
    table.
 
 ---
@@ -118,9 +116,9 @@ in bulk via Knowledge Settings -> "Publish All Drafts" (or via SOQL).
 ## EXIT GATE
 
 - Semantic search for "Pep Guardiola false nine" returns top-5 chunks all
-  belonging to `entity_type=manager` and `entity_slug` containing "guardiola".
+belonging to `entity_type=manager` and `entity_slug` containing "guardiola".
 - Semantic search for "Klopp gegenpressing" returns Liverpool-related
-  chunks with `entity_type` in `{manager, club}`.
+chunks with `entity_type` in `{manager, club}`.
 - Both queries return clickable `source_url` citations.
 
 Proceed to [phase5-agent-build.md](phase5-agent-build.md).
