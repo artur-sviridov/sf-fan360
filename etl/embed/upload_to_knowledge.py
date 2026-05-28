@@ -28,6 +28,14 @@ KNOWLEDGE_RECORD_TYPE = "BroadcastKnowledge"
 OnDuplicate = Literal["skip", "update", "fail"]
 Granularity = Literal["chunk", "entity"]
 
+# Optional dependency; keep import at module level for ruff/isort.
+try:
+    from simple_salesforce.exceptions import (  # type: ignore[import-not-found]
+        SalesforceMalformedRequest,
+    )
+except ImportError:  # pragma: no cover
+    SalesforceMalformedRequest = None  # type: ignore[assignment]
+
 # Knowledge Body__c LongTextArea length in metadata
 _MAX_BODY_CHARS = 32_000
 
@@ -97,9 +105,7 @@ def _existing_by_url_name(sf: Any) -> dict[str, str]:
 
 
 def _sf_error_code(exc: BaseException, code: str) -> bool:
-    from simple_salesforce.exceptions import SalesforceMalformedRequest  # type: ignore[import-not-found]
-
-    if not isinstance(exc, SalesforceMalformedRequest):
+    if SalesforceMalformedRequest is None or not isinstance(exc, SalesforceMalformedRequest):
         return False
     content = getattr(exc, "content", None) or []
     if isinstance(content, list):

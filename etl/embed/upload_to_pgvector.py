@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 def _chunks(seq: list[tuple], size: int):
     for i in range(0, len(seq), size):
-        yield i, seq[i : i + size]
+        yield seq[i : i + size]
 
 
 def upload(
@@ -96,14 +96,14 @@ def upload(
             for r in df.itertuples(index=False):
                 rows.append(
                     (
-                        getattr(r, "chunk_id"),
-                        getattr(r, "source_url"),
-                        getattr(r, "title"),
-                        getattr(r, "entity_type"),
-                        getattr(r, "entity_slug"),
-                        getattr(r, "text"),
-                        int(getattr(r, "token_count")),
-                        list(getattr(r, "vector")),
+                        r.chunk_id,
+                        r.source_url,
+                        r.title,
+                        r.entity_type,
+                        r.entity_slug,
+                        r.text,
+                        int(r.token_count),
+                        list(r.vector),
                     )
                 )
 
@@ -111,12 +111,10 @@ def upload(
                 raise ValueError("batch_size must be > 0")
 
             total = len(rows)
-            batches = 0
             upserted = 0
-            for start, batch in _chunks(rows, batch_size):
+            for batches, batch in enumerate(_chunks(rows, batch_size), start=1):
                 cur.executemany(stmt, batch)
                 conn.commit()
-                batches += 1
                 upserted += len(batch)
                 if log_every_batches > 0 and batches % log_every_batches == 0:
                     logger.info("pgvector: upserted %d/%d rows", upserted, total)
