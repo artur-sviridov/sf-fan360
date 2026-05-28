@@ -1,8 +1,9 @@
 """Generate embeddings for chunked Wikipedia content using free Gemini API.
 
 Reads the JSONL produced by `etl.embed.chunker`, calls
-`text-embedding-004` via the Gemini Developer API (no Vertex billing), and
-writes a Parquet with one row per chunk plus a `vector` column.
+`gemini-embedding-001` via the Gemini Developer API (no Vertex billing), and
+writes a Parquet with one row per chunk plus a `vector` column (768-dim for
+pgvector / legacy indexes).
 
 Output is consumed by:
 - `etl.embed.upload_to_pgvector` (fallback path).
@@ -43,6 +44,7 @@ def embed_one(text: str, *, model: str | None = None) -> list[float]:
         json={
             "model": f"models/{model}",
             "content": {"parts": [{"text": text}]},
+            "outputDimensionality": settings.gemini_embed_dimensions,
         },
         timeout=30,
     )

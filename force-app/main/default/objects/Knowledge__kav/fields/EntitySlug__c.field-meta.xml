@@ -3,7 +3,6 @@
     <fullName>EntitySlug__c</fullName>
     <description
   >Slug of the entity this chunk belongs to (e.g. "mohamed-salah"). Used by agent prompts to scope semantic search.</description>
-    <externalId>true</externalId>
     <label>Entity Slug</label>
     <length>120</length>
     <required>false</required>

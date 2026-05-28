@@ -31,13 +31,26 @@ import typer
 logger = logging.getLogger(__name__)
 
 
-def upload(parquet: Path, *, dsn: str | None = None, table: str = "broadcast_knowledge") -> int:
+def _chunks(seq: list[tuple], size: int):
+    for i in range(0, len(seq), size):
+        yield seq[i : i + size]
+
+
+def upload(
+    parquet: Path,
+    *,
+    dsn: str | None = None,
+    table: str = "broadcast_knowledge",
+    batch_size: int = 200,
+    log_every_batches: int = 5,
+) -> int:
     dsn = dsn or os.environ.get("PGVECTOR_DSN")
     if not dsn:
         raise RuntimeError("PGVECTOR_DSN not set")
     try:
         import psycopg
         from pgvector.psycopg import register_vector
+        from psycopg import sql
     except ImportError as exc:  # pragma: no cover
         raise RuntimeError("pip install psycopg pgvector for the fallback path") from exc
 
@@ -47,8 +60,9 @@ def upload(parquet: Path, *, dsn: str | None = None, table: str = "broadcast_kno
         register_vector(conn)
         with conn.cursor() as cur:
             cur.execute(
-                f"""
-                CREATE TABLE IF NOT EXISTS {table} (
+                sql.SQL(
+                    """
+                CREATE TABLE IF NOT EXISTS {} (
                     chunk_id text PRIMARY KEY,
                     source_url text,
                     title text,
@@ -59,32 +73,59 @@ def upload(parquet: Path, *, dsn: str | None = None, table: str = "broadcast_kno
                     vector vector(768)
                 );
                 """
+                ).format(sql.Identifier(table))
             )
-            for _, row in df.iterrows():
-                cur.execute(
-                    f"""
-                    INSERT INTO {table} (chunk_id, source_url, title, entity_type, entity_slug, text, token_count, vector)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                    ON CONFLICT (chunk_id) DO UPDATE SET
-                        source_url = EXCLUDED.source_url,
-                        title      = EXCLUDED.title,
-                        text       = EXCLUDED.text,
-                        token_count= EXCLUDED.token_count,
-                        vector     = EXCLUDED.vector
-                    """,
+
+            stmt = sql.SQL(
+                """
+                INSERT INTO {} (chunk_id, source_url, title, entity_type, entity_slug, text, token_count, vector)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (chunk_id) DO UPDATE SET
+                    source_url = EXCLUDED.source_url,
+                    title      = EXCLUDED.title,
+                    entity_type= EXCLUDED.entity_type,
+                    entity_slug= EXCLUDED.entity_slug,
+                    text       = EXCLUDED.text,
+                    token_count= EXCLUDED.token_count,
+                    vector     = EXCLUDED.vector
+                """
+            ).format(sql.Identifier(table))
+
+            # Materialize rows in Python once so we can batch efficiently.
+            rows: list[tuple] = []
+            for r in df.itertuples(index=False):
+                rows.append(
                     (
-                        row["chunk_id"],
-                        row["source_url"],
-                        row["title"],
-                        row["entity_type"],
-                        row["entity_slug"],
-                        row["text"],
-                        int(row["token_count"]),
-                        list(row["vector"]),
-                    ),
+                        r.chunk_id,
+                        r.source_url,
+                        r.title,
+                        r.entity_type,
+                        r.entity_slug,
+                        r.text,
+                        int(r.token_count),
+                        list(r.vector),
+                    )
                 )
-            cur.execute(f"CREATE INDEX IF NOT EXISTS {table}_vec_idx ON {table} USING ivfflat (vector vector_cosine_ops);")
-        conn.commit()
+
+            if batch_size <= 0:
+                raise ValueError("batch_size must be > 0")
+
+            total = len(rows)
+            upserted = 0
+            for batches, batch in enumerate(_chunks(rows, batch_size), start=1):
+                cur.executemany(stmt, batch)
+                conn.commit()
+                upserted += len(batch)
+                if log_every_batches > 0 and batches % log_every_batches == 0:
+                    logger.info("pgvector: upserted %d/%d rows", upserted, total)
+
+            cur.execute(
+                sql.SQL(
+                    "CREATE INDEX IF NOT EXISTS {} ON {} USING ivfflat (vector vector_cosine_ops);"
+                ).format(sql.Identifier(f"{table}_vec_idx"), sql.Identifier(table))
+            )
+            conn.commit()
+
     logger.info("pgvector: upserted %d chunks", len(df))
     return len(df)
 
@@ -97,10 +138,18 @@ def main(
     parquet: Path = typer.Option(Path("data/embeddings/wikipedia.parquet")),
     table: str = typer.Option("broadcast_knowledge"),
     dsn: str | None = typer.Option(None),
+    batch_size: int = typer.Option(200, help="Rows per transaction/commit."),
+    log_every_batches: int = typer.Option(5, help="Log progress every N batches."),
     log_level: str = typer.Option("INFO"),
 ) -> None:
     logging.basicConfig(level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s")
-    n = upload(parquet, dsn=dsn, table=table)
+    n = upload(
+        parquet,
+        dsn=dsn,
+        table=table,
+        batch_size=batch_size,
+        log_every_batches=log_every_batches,
+    )
     typer.echo(f"pgvector upsert: {n}")
 
 

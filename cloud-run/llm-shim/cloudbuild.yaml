@@ -31,7 +31,7 @@ steps:
           --service-account $_SA@$PROJECT_ID.iam.gserviceaccount.com \
           --no-allow-unauthenticated \
           --set-secrets GEMINI_API_KEY=gemini-api-key:latest,SHIM_SHARED_SECRET=llm-shim-shared-secret:latest,PGVECTOR_DSN=pgvector-dsn:latest \
-          --set-env-vars PRIMARY_MODEL=gemini-2.5-flash,FALLBACK_MODEL=gemini-2.5-flash-lite,EMBED_MODEL=text-embedding-004 \
+          --set-env-vars PRIMARY_MODEL=gemini-2.5-flash,FALLBACK_MODEL=gemini-2.5-flash-lite,EMBED_MODEL=gemini-embedding-001,EMBED_OUTPUT_DIMENSIONS=768 \
           --cpu 1 --memory 512Mi --concurrency 80 --timeout 60s \
           --min-instances 0 --max-instances 5
 

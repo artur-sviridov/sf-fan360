@@ -12,7 +12,8 @@ class Settings(BaseSettings):
     gemini_api_key: str = Field(default="")
     primary_model: str = Field(default="gemini-2.5-flash")
     fallback_model: str = Field(default="gemini-2.5-flash-lite")
-    embed_model: str = Field(default="text-embedding-004")
+    embed_model: str = Field(default="gemini-embedding-001")
+    embed_output_dimensions: int = Field(default=768)
 
     shim_shared_secret: str = Field(default="")
     cache_ttl_seconds: int = Field(default=60)

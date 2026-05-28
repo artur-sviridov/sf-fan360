@@ -52,10 +52,13 @@ class Settings(BaseSettings):
     gemini_api_key: str | None = Field(default=None)
     gemini_primary_model: str = Field(default="gemini-2.5-flash")
     gemini_fallback_model: str = Field(default="gemini-2.5-flash-lite")
-    gemini_embed_model: str = Field(default="text-embedding-004")
+    gemini_embed_model: str = Field(default="gemini-embedding-001")
+    gemini_embed_dimensions: int = Field(default=768)
 
     # Salesforce
     sf_org_alias: str = Field(default="football_agent")
+    sf_instance_url: str | None = Field(default=None)
+    sf_access_token: str | None = Field(default=None)
     sf_ingest_client_id: str | None = Field(default=None)
     sf_ingest_username: str | None = Field(default=None)
     sf_ingest_private_key_path: str | None = Field(default=None)
