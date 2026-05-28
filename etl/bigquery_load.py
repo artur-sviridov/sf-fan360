@@ -156,8 +156,7 @@ def run_sql_file(path: Path | str) -> None:
     client = _bq_client()
     sql = Path(path).read_text(encoding="utf-8")
     sql = (
-        sql
-        .replace("${project}", settings.gcp_project_id)
+        sql.replace("${project}", settings.gcp_project_id)
         .replace("${dataset_raw}", settings.bq_dataset_raw)
         .replace("${dataset_marts}", settings.bq_dataset_marts)
         .replace("sf-fan360", settings.gcp_project_id)

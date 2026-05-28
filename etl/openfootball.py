@@ -185,7 +185,9 @@ def cli_run(
     target: str | None = typer.Option(None, help="Override parquet target path."),
     log_level: str = typer.Option("INFO"),
 ) -> None:
-    logging.basicConfig(level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    logging.basicConfig(
+        level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s"
+    )
     df = fetch()
     out = to_parquet(df, target=target)
     typer.echo(f"openfootball: {len(df)} matches -> {out}")

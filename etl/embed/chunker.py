@@ -113,7 +113,9 @@ def main(
     out: Path = typer.Option(DEFAULT_OUT, help="Output JSONL."),
     log_level: str = typer.Option("INFO"),
 ) -> None:
-    logging.basicConfig(level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    logging.basicConfig(
+        level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s"
+    )
     docs = load_documents_from_parquet(parquet)
     chunks = chunk_documents(docs)
     write_jsonl(chunks, out)

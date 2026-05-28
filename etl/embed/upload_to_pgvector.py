@@ -83,7 +83,9 @@ def upload(parquet: Path, *, dsn: str | None = None, table: str = "broadcast_kno
                         list(row["vector"]),
                     ),
                 )
-            cur.execute(f"CREATE INDEX IF NOT EXISTS {table}_vec_idx ON {table} USING ivfflat (vector vector_cosine_ops);")
+            cur.execute(
+                f"CREATE INDEX IF NOT EXISTS {table}_vec_idx ON {table} USING ivfflat (vector vector_cosine_ops);"
+            )
         conn.commit()
     logger.info("pgvector: upserted %d chunks", len(df))
     return len(df)
@@ -99,7 +101,9 @@ def main(
     dsn: str | None = typer.Option(None),
     log_level: str = typer.Option("INFO"),
 ) -> None:
-    logging.basicConfig(level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    logging.basicConfig(
+        level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s"
+    )
     n = upload(parquet, dsn=dsn, table=table)
     typer.echo(f"pgvector upsert: {n}")
 

@@ -133,9 +133,7 @@ def _wiki_api():
     try:
         import wikipediaapi  # type: ignore[import-not-found]
     except ImportError as exc:  # pragma: no cover
-        raise RuntimeError(
-            "wikipedia-api not installed. `pip install -e \".[dev]\"` first."
-        ) from exc
+        raise RuntimeError('wikipedia-api not installed. `pip install -e ".[dev]"` first.') from exc
     return wikipediaapi.Wikipedia(
         user_agent=f"{USER_AGENT_BASE} ({settings.user_agent})",
         language="en",
@@ -145,7 +143,9 @@ def _wiki_api():
 @throttled(rate_per_sec=2.0)
 def _fetch_one(slug: str, entity_type: str) -> WikiDoc | None:
     wiki = _wiki_api()
-    page = wiki.page(slug.replace("%26", "&").replace("%27", "'").replace("%C3%BC", "ü").replace("%C3%A9", "é"))
+    page = wiki.page(
+        slug.replace("%26", "&").replace("%27", "'").replace("%C3%BC", "ü").replace("%C3%A9", "é")
+    )
     if not page.exists():
         logger.warning("wikipedia: %s/%s not found", entity_type, slug)
         return None
@@ -162,7 +162,9 @@ def _fetch_one(slug: str, entity_type: str) -> WikiDoc | None:
     )
 
 
-def fetch(*, include_players: bool = True, include_clubs: bool = True, include_managers: bool = True) -> list[WikiDoc]:
+def fetch(
+    *, include_players: bool = True, include_clubs: bool = True, include_managers: bool = True
+) -> list[WikiDoc]:
     docs: list[WikiDoc] = []
     if include_clubs:
         for slug in CLUB_SLUGS:
@@ -187,7 +189,9 @@ def to_parquet(docs: Iterable[WikiDoc] | None = None) -> str:
     docs = list(docs) if docs is not None else fetch()
     df = pd.DataFrame([d.__dict__ for d in docs])
     target = settings.parquet_target("wikipedia", "documents")
-    write_parquet(df, target, partition_cols=["entity_type"] if "entity_type" in df.columns else None)
+    write_parquet(
+        df, target, partition_cols=["entity_type"] if "entity_type" in df.columns else None
+    )
     logger.info("wikipedia: wrote %d documents to %s", len(df), target)
     return target
 
@@ -203,7 +207,9 @@ app = typer.Typer(no_args_is_help=True, help="Wikipedia narrative loader.")
 def cli_run(
     log_level: str = typer.Option("INFO"),
 ) -> None:
-    logging.basicConfig(level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    logging.basicConfig(
+        level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s"
+    )
     docs = fetch()
     target = to_parquet(docs)
     typer.echo(f"wikipedia: {len(docs)} docs -> {target}")

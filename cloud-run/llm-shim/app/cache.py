@@ -14,7 +14,9 @@ from cachetools import TTLCache
 
 from app.config import settings
 
-_cache: TTLCache[str, Any] = TTLCache(maxsize=settings.cache_maxsize, ttl=settings.cache_ttl_seconds)
+_cache: TTLCache[str, Any] = TTLCache(
+    maxsize=settings.cache_maxsize, ttl=settings.cache_ttl_seconds
+)
 
 
 def cache_key(*parts: Any) -> str:

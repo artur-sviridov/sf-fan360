@@ -35,8 +35,25 @@ jobs:
           ruff check etl cloud-run/live-ingest/app cloud-run/llm-shim/app
           --ignore E501,PLC0415,PLR2004,B008,PLR0913
 
+      - name: Ruff format
+        run: ruff format --check etl cloud-run/live-ingest/app cloud-run/llm-shim/app
+
+      - name: Mypy (ETL)
+        run: mypy etl
+        continue-on-error: true
+
+      - name: Mypy (live-ingest)
+        working-directory: cloud-run/live-ingest
+        run: mypy app
+        continue-on-error: true
+
+      - name: Mypy (llm-shim)
+        working-directory: cloud-run/llm-shim
+        run: mypy app
+        continue-on-error: true
+
       - name: Pytest (ETL)
-        run: pytest tests/
+        run: pytest tests/ --cov=etl --cov-report=term-missing --cov-fail-under=20
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ""
 

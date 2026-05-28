@@ -27,7 +27,9 @@ def main(
     skip_bigquery: bool = typer.Option(False, help="Stop after Parquet write."),
     log_level: str = typer.Option("INFO"),
 ) -> None:
-    logging.basicConfig(level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    logging.basicConfig(
+        level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s"
+    )
     logger.info("run_full: mode=%s project=%s", settings.mode(), settings.gcp_project_id)
 
     if not skip_openfootball:
