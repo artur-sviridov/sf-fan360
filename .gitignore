@@ -156,10 +156,6 @@ docs/decisions/
 # LinkedIn drafts (not published)
 docs/linkedin-posts/
 
-
-# Trust layer evidence (not published)
-docs/trust-layer-evidence/
-
 # Local operator notes (not published)
 docs/adlc-log.md
 docs/agent-test-utterances.md

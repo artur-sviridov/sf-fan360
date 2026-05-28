@@ -34,6 +34,9 @@ dependencies = [
   # Embedding + chunking
   "langchain-text-splitters>=0.3",
 
+  # Phase 4 Knowledge upload (upload_to_knowledge.py)
+  "simple-salesforce>=1.12",
+
   # CLI / logging
   "typer>=0.12",
   "rich>=13.7",

@@ -1,4 +1,4 @@
-"""Vector RAG search backed by pgvector + Gemini text-embedding-004.
+"""Vector RAG search backed by pgvector + Gemini gemini-embedding-001.
 
 The Agentforce External Service Action `Semantic_Search_Knowledge` POSTs
 to `/rag/search` with a natural-language `query` plus optional
@@ -51,6 +51,7 @@ def embed_query(text: str) -> list[float]:
         json={
             "model": f"models/{settings.embed_model}",
             "content": {"parts": [{"text": text}]},
+            "outputDimensionality": settings.embed_output_dimensions,
         },
         timeout=settings.request_timeout_seconds,
     )
