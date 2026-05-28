@@ -49,6 +49,7 @@ flowchart LR
   gcs --> bq
   fpl & af --> cr2
   cr2 --> bq
+  cr2 -. fixture-driven pause/resume .-> cr2
   bq -->|Zero Copy| dc
   dc --> dmo --> af1
   wiki --> kb --> vdb --> af1
