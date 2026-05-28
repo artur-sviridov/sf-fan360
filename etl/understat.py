@@ -28,9 +28,7 @@ def _understat():
     try:
         from understatapi import UnderstatClient  # type: ignore[import-not-found]
     except ImportError as exc:  # pragma: no cover
-        raise RuntimeError(
-            "understatapi not installed. `pip install -e \".[dev]\"` first."
-        ) from exc
+        raise RuntimeError('understatapi not installed. `pip install -e ".[dev]"` first.') from exc
     return UnderstatClient
 
 
@@ -141,7 +139,9 @@ def cli_run(
     no_cache: bool = typer.Option(False, "--no-cache"),
     log_level: str = typer.Option("INFO"),
 ) -> None:
-    logging.basicConfig(level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    logging.basicConfig(
+        level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s"
+    )
     df = fetch(first_season=first_season, last_season=last_season, use_cache=not no_cache)
     target = to_parquet(df)
     typer.echo(f"understat: {len(df)} rows -> {target}")

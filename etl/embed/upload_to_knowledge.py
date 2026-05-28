@@ -93,7 +93,9 @@ def main(
     dry_run: bool = typer.Option(False, "--dry-run"),
     log_level: str = typer.Option("INFO"),
 ) -> None:
-    logging.basicConfig(level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    logging.basicConfig(
+        level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s"
+    )
     n = upload_chunks(jsonl, dry_run=dry_run)
     typer.echo(f"uploaded {n} articles")
 

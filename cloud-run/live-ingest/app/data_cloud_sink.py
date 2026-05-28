@@ -59,7 +59,9 @@ def _mint_jwt() -> str:
         "aud": JWT_AUDIENCE,
         "exp": now + JWT_LIFETIME_SECONDS,
     }
-    signing_input = f"{_b64url(json.dumps(header).encode())}.{_b64url(json.dumps(claims).encode())}".encode()
+    signing_input = (
+        f"{_b64url(json.dumps(header).encode())}.{_b64url(json.dumps(claims).encode())}".encode()
+    )
     signature = private_key.sign(signing_input, padding.PKCS1v15(), hashes.SHA256())
     return f"{signing_input.decode()}.{_b64url(signature)}"
 

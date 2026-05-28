@@ -26,9 +26,7 @@ from etl.config import settings
 
 logger = logging.getLogger(__name__)
 
-EMBED_ENDPOINT_TPL = (
-    "https://generativelanguage.googleapis.com/v1beta/models/{model}:embedContent"
-)
+EMBED_ENDPOINT_TPL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:embedContent"
 
 
 @retry(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=1, max=20))
@@ -85,8 +83,14 @@ def main(
     sleep_seconds: float = typer.Option(0.2),
     log_level: str = typer.Option("INFO"),
 ) -> None:
-    logging.basicConfig(level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s")
-    chunks = [orjson.loads(line) for line in jsonl.read_text(encoding="utf-8").splitlines() if line.strip()]
+    logging.basicConfig(
+        level=log_level.upper(), format="%(asctime)s %(levelname)s %(name)s %(message)s"
+    )
+    chunks = [
+        orjson.loads(line)
+        for line in jsonl.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
     df = embed_chunks(chunks, sleep=sleep_seconds)
     out.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(out, index=False)

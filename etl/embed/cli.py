@@ -1,9 +1,9 @@
 """Unified CLI for the embed pipeline.
 
-    etl-embed chunk    -> chunk Wikipedia documents
-    etl-embed embed    -> generate Gemini embeddings
-    etl-embed kb       -> upload chunks as Salesforce Knowledge articles
-    etl-embed pgvector -> upsert vectors to a fallback pgvector store
+etl-embed chunk    -> chunk Wikipedia documents
+etl-embed embed    -> generate Gemini embeddings
+etl-embed kb       -> upload chunks as Salesforce Knowledge articles
+etl-embed pgvector -> upsert vectors to a fallback pgvector store
 """
 
 from __future__ import annotations

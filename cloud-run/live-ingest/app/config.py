@@ -18,8 +18,12 @@ class Settings(BaseSettings):
     football_data_api_key: str | None = Field(default=None)
 
     # FPL official endpoints don't need a key.
-    fpl_bootstrap_url: str = Field(default="https://fantasy.premierleague.com/api/bootstrap-static/")
-    fpl_event_live_url_tpl: str = Field(default="https://fantasy.premierleague.com/api/event/{gw}/live/")
+    fpl_bootstrap_url: str = Field(
+        default="https://fantasy.premierleague.com/api/bootstrap-static/"
+    )
+    fpl_event_live_url_tpl: str = Field(
+        default="https://fantasy.premierleague.com/api/event/{gw}/live/"
+    )
 
     # Salesforce Data Cloud Ingestion API (filled by Phase 3).
     sf_ingest_url: str | None = Field(default=None)

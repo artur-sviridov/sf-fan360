@@ -89,6 +89,7 @@ def _route_model(requested_model: str) -> str:
 
 class SearchRequestExternal(BaseModel):
     """OpenAPI-flavored body used by Agentforce External Service Action."""
+
     query: str
     k: int = 5
     entityType: str | None = None
